@@ -73,3 +73,6 @@ Since we really want to also use Kafka in this simple application, we will expos
 kafka.bootstrap.servers=localhost:9092
 ```
 You can find all relevant documentation [here](https://micronaut-projects.github.io/micronaut-kafka/latest/guide/#kafkaQuickStart)
+
+## Experimenting even more
+If you still have time, you can try out some more of the basic features. Maybe write some integration test for your controller, add some validation or refactor your whole application to go fully reactive. You can find the documention of the relevant projects [here](https://docs.micronaut.io/index.html).
