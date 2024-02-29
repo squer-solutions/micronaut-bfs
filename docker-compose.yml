@@ -1,0 +1,81 @@
+version: '3.9'
+services:
+  db:
+    image: 'postgres'
+    container_name: micronaut-bfs-db
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: micronaut-bfs-db
+    ports:
+      - '5432:5432'
+  redis:
+    image: redis:latest
+    container_name: micronaut-bfs-redis
+    ports:
+      - "6379:6379"
+  redis-commander:
+    image: rediscommander/redis-commander
+    container_name: micronaut-bfs-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - '8089:8081'
+    depends_on:
+      - redis
+  redpanda:
+    container_name: micronaut-bfs-redpanda
+    image: docker.redpanda.com/vectorized/redpanda:latest
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
+    ports:
+      - '8081:8081'
+      - '8082:8082'
+      - '9092:9092'
+      - '9644:9644'
+      - '29092:29092'
+    healthcheck:
+      test: [ "CMD", "rpk", "topic", "list", "--brokers", "redpanda:29092" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+  redpanda-setup:
+    container_name: micronaut-bfs-redpanda-setup
+    image: docker.redpanda.com/vectorized/redpanda:latest
+    command: topic create micronaut-bfs-plot-notifications --brokers redpanda:29092
+    depends_on:
+      redpanda:
+        condition: service_healthy
+  console:
+    container_name: micronaut-bfs-redpanda-console
+    image: docker.redpanda.com/vectorized/console:latest
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:29092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+        connect:
+          enabled: true
+          clusters:
+            - name: local-connect-cluster
+              url: http://connect:8083
+    ports:
+      - "4040:8080"
+    depends_on:
+      - redpanda
