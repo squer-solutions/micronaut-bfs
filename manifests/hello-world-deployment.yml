@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-micronaut-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-world-micronaut-app
+  template:
+    metadata:
+      labels:
+        app: hello-world-micronaut-app
+    spec:
+      containers:
+        - name: hello-world-micronaut-app
+          image: hello-world-micronaut-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
