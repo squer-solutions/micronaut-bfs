@@ -61,6 +61,8 @@ We will be using Micronaut Data JPA and you can find the relevant documentation 
 ## Adding a cacheing layer
 To optimize read operations against our database, we want to introduce a cacheing layer with Redis. There is a Redis instance defined in the docker-compose.yml file, which the application can use. The necessary dependencies are already available, you just need to add the following to your application.properties file:
 ```properties
+redis.uri=redis://localhost
+redis.caches.plots.expire-after-write=1h
 ```
 For the cache to properly work, we want to update the cache on every write operation, so the read operation is always up-to-date. You can find all relevant documentation [here](https://micronaut-projects.github.io/micronaut-cache/latest/guide/#annotations).
 Keep in mind that Micronaut cache relies on serialization of the objects that should be cached. This can be achieved by either implementing the `java.io.Serializable` interface or implementing some custom serializer.
@@ -68,6 +70,6 @@ Keep in mind that Micronaut cache relies on serialization of the objects that sh
 ## Integrating with Kafka
 Since we really want to also use Kafka in this simple application, we will expose an additional HTTP endpoint which will trigger a producer to publish a message. We will also implement a simple consumer that will consume from the same topic and log to stdout. Redpanda is included in the docker-compose setup and the topic `micronaut-bfs-plot-notifications` is created automatically. The necessary dependencies are already available, you just need to add the following to your application.properties file:
 ```properties
-https://micronaut-projects.github.io/micronaut-kafka/latest/guide/#kafkaQuickStart
+kafka.bootstrap.servers=localhost:9092
 ```
 You can find all relevant documentation [here](https://micronaut-projects.github.io/micronaut-kafka/latest/guide/#kafkaQuickStart)
