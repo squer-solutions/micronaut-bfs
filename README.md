@@ -21,11 +21,11 @@ sdk install micronaut
 
 After that you should have access to the Micronaut CLI and you can create a new application and open it in your preferred IDE:
 ```shell
-mn create-app micronaut-bfs-essential-features --features data-jpa,postgres,redis-lettuce
+mn create-app micronaut-bfs-essential-features --features data-jpa,postgres,redis-lettuce,kafka
 ```
 
 ### Micronaut Launch
-Micronaut offers another tool to create applications called [Micronaut Launch](https://micronaut.io/launch/). You can go to this page and create an application based on your needs. Then you can download the project and open it in your preferred IDE.
+Micronaut offers another tool to create applications called [Micronaut Launch](https://micronaut.io/launch/). You can go to this page and create an application based on your needs. Make sure to select all necessary features: data-jpa, postgres, redis-lettuce, kafka. Then you can download the project and open it in your preferred IDE.
 Some IDEs have an integration with Micronaut Launch and you can create a new application right in the IDE. In IntelliJ, go to File->New->Project and select Micronaut in the list. 
 
 ## Running the Application
