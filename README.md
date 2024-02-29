@@ -1,15 +1,20 @@
 # Performance Benchmarking
 
-We want to gain some insights on how well Micronaut performs in certain areas compared to other JVM frameworks (e.g. Spring, Quarkus). The promise of Micronaut is fast startup times and a low memory footprint, let's see for ourselves if this promise is kept and how big the difference to other frameworks actually is. We might also be interested in other metrics like image sizes, build times and execution performance. We could also extend these comparisons to include native images as well.
+We want to gain some insights on how well Micronaut performs in certain areas compared to other JVM frameworks (e.g. Spring, Quarkus). 
+The promise of Micronaut is fast startup times and a low memory footprint, let's see for ourselves if this promise is kept and how big the difference to other frameworks actually is. 
+We might also be interested in other metrics like image sizes, build times and execution performance. We could also extend these comparisons to include native images as well (especially interesting for startup times and build times).
 
 ## Scenario Definition
-Before actually collecting metrics, we will have to build a (simple) Micronaut application and the equivalent of this application in another framework (e.g. Spring Boot). Let's think about an application scope that is suitable for such a benchmark, it could be a simple API without any other dependencies, but could also be a bit more complex and include database access, cacheing, messaging, etc. Keep in mind that the time here is very limited, so let's pick a scenario that can be implementend in less than 30 minutes.
+Before actually collecting metrics, we will have to build a (simple) Micronaut application and the equivalent of this application in another framework (e.g. Spring Boot). 
+Let's think about an application scope that is suitable for such a benchmark, it could be a simple API without any other dependencies, but could also be a bit more complex and include database access, cacheing, messaging, etc. 
+Keep in mind that the time here is very limited, so let's pick a scenario that can be implemented in less than 30 minutes.
 After this scenario is defined, let's implement the two applications.
 
 A simple Micronaut application is already available that exposes a single endpoint `/api/hello`. You can use this application as is, extend it or start from scratch.
+A functionally equivalent Spring Boot application is available as well.
 
-## Micronaut Project Setup
-To start with, we want to setup the basic structure for a Micronaut application. Micronaut offers two easy ways to do that:
+## Micronaut Project Setup (If you want to start from scratch)
+To start with, we want to set up the basic structure for a Micronaut application. Micronaut offers two easy ways to do that:
 
 ### Micronaut CLI
 There a multiple [options to install](https://micronaut-projects.github.io/micronaut-starter/latest/guide/#installation) the Micronaut CLI. I would recommend SDKMAN as this is useful for handling different versions:
@@ -37,7 +42,7 @@ After you have created a new Micronaut application, you can simply run it from t
 ./gradlew run
 ```
 
-## Implementing the Scenario
+## Implementing the Scenario (If you want to start from scratch or extend the simple application)
 There is a docker-compose.yml file available in this repo, that defines the following services, that can be used in your application: postgres, redis, redpanda (kafka).
 
 ### Micronaut
@@ -79,7 +84,7 @@ I hope you have chosen a framework that you are familiar with and can easily por
 
 ## Benchmarking
 There might not be a single tool to measure all relevant metrics. Here are some suggestions on how a very simple benchmarking could look like. For some metrics you can simply run the applications using the gradle commands, for some others it makes sense to build a docker image and run the containerized application.
-For Micronaut there is a simple gradle command to build a docker image or even the native docker image:
+For Micronaut there is a simple gradle command to build a docker image or even the native docker image (make sure to use a JDK that supports native images):
 ```shell
 ./gradlew clean dockerBuild
 ./gradlew clean dockerBuildNative
