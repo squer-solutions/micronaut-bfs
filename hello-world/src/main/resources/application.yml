@@ -1,0 +1,4 @@
+#Thu Feb 29 17:21:29 CET 2024
+micronaut:
+  application:
+    name: hello-world-micronaut-app

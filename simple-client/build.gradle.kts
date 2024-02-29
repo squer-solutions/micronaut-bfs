@@ -16,6 +16,7 @@ dependencies {
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.kubernetes:micronaut-kubernetes-discovery-client")
     runtimeOnly("ch.qos.logback:logback-classic")
 }
 

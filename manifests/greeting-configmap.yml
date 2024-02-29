@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: greeting-configmap
+data:
+  application.yml: |-
+    greeting:
+      message: "Hello World!"
