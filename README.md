@@ -83,5 +83,15 @@ After that you can try to create a Secret in the cluster and inject some additio
 You should find the relevant documentation [here](https://micronaut-projects.github.io/micronaut-kubernetes/latest/guide/#config-client).
 
 ## Distributed Tracing
+To experiment with the distributed tracing support of Micronaut, we will deploy [Zipkin](https://zipkin.io/) to our local cluster:
+```shell
+kubectl apply -f zipkin/zipkin.yml -n micronaut-bfs
+```
+Then we can do some port-forwarding to access the zipkin UI on localhost:9411 in our local browser:
+```shell
+kubectl port-forward svc/zipkin 9411:9411 -n micronaut-bfs
+```
 
-## Serverless Functions
+Now let's integrate our API application with Zipkin to send some traces. You can find the documentation [here](https://micronaut-projects.github.io/micronaut-tracing/latest/guide/#zipkin).
+You will need to add a dependency and some configuration to the application. By default, all HTTP requests should already be sent to Zipkin and visible on the UI.
+But you can still experiment with some custom span definitions using Micronauts [tracing annotations](https://micronaut-projects.github.io/micronaut-tracing/latest/guide/#introduction).
