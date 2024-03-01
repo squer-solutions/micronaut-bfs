@@ -15,25 +15,28 @@ If you want, you can use the minikube dashboard to see what is going on within y
 ```shell
 minikube dashboard
 ```
-You can also point your local Docker CLI to the Minikube docker daemon, so docker builds images directly inside Minikube and you don't have to push images to a remote registry.
-By executing the following command you can do this for the current shell:
+You should also point your local Docker CLI to the Minikube docker daemon, so docker builds images directly inside Minikube and you don't have to push images to a remote registry or manually add them.
+By executing the following command you can do this for the current terminal:
 ```shell
 eval $(minikube docker-env)
 ```
-It is advisable to create a dedicated namespace for our experiments:
+Let's also create a dedicated namespace for our experiments:
 ```shell
 kubectl create namespace micronaut-bfs
 ```
 
-## Service Discovery
-To make things easy, we will use Kubernetes built-in service discovery mechanisms. But we could as well use systems like Consul or Eureka, integration with Micronaut should be very similar.
-There are two simple Micronaut applications available in the repo:
+There are two simple Micronaut applications available on this branch:
 - hello-world: A simple API exposing a single endpoint.
 - simple-client: A simple HTTP client calling the hello-world service every 5 seconds.
 
-There are also some kubernetes manifests available. So you just need to build the images for both applications (`./gradlew dockerBuild`)
-and apply all the manifests (`kubectl apply -n micronaut-bfs -f manifests`). This will create the resources in your local cluster and spin up some pods.
-The client application can now simply discover the API service and call it using the service name:
+There are also some kubernetes manifests available in the dedicated folder. 
+To get started, just build the images for both applications (`./gradlew dockerBuild`) and apply all the manifests in the correct namespace (`kubectl apply -n micronaut-bfs -f manifests`). 
+This will create the resources in your local cluster and spin up some pods.
+
+## Service Discovery
+To make things easier, the client application already uses Kubernetes built-in service discovery mechanisms. The application already defines one additional dependency and is configured in a way,
+that it will scan all kubernetes Service resources, so it can communicate with them. 
+With this setup, the client application can simply reference the API it wants to call by the Service name.
 ```yaml
 apiVersion: v1
 kind: Service
@@ -41,7 +44,7 @@ metadata:
   name: hello-world-micronaut-app
 ```
 ```java
-@Client("http://hello-world-micronaut-app")
+@Client(id = "hello-world-micronaut-app")
 public interface SimpleClient {
 
     @Get("/api/hello")
@@ -49,6 +52,21 @@ public interface SimpleClient {
 }
 ```
 If everything went as planned, you should be able to see log messages in the client pods, logging the response from the API.
+
+**Before going ahead and building on top of that, it might make sense to also check the rest of the README.**
+
+### Consul
+Let's go a step further and introduce Consul in our cluster, where our applications can register and discover services.
+We will start with installing Consul using Helm in the cluster. If not already available, [install helm](https://helm.sh/docs/intro/install/) on your machine.
+Then we can use the Consul helm chart to install all necessary resources in our cluster. There is a custom [custom values file](consul/values.yml) available that should be used.
+```shell
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install --values consul/values.yml consul hashicorp/consul --namespace micronaut-bfs
+```
+
+Now you can start integrating the application with Consul. There is some documentation available [here](https://micronaut-projects.github.io/micronaut-discovery-client/latest/guide/#serviceDiscoveryConsul).
+You will need to update some dependencies in both applications and add the necessary configuration. Then you should be able to re-build the images,
+restart your deployments and verify if the service is properly registered.
 
 ## Client-side Load Balancing
 If you successfully deployed the applications in the previous step, you should already be able to see the client-side load balancing in action.
