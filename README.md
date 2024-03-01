@@ -95,3 +95,8 @@ kubectl port-forward svc/zipkin 9411:9411 -n micronaut-bfs
 Now let's integrate our API application with Zipkin to send some traces. You can find the documentation [here](https://micronaut-projects.github.io/micronaut-tracing/latest/guide/#zipkin).
 You will need to add a dependency and some configuration to the application. By default, all HTTP requests should already be sent to Zipkin and visible on the UI.
 But you can still experiment with some custom span definitions using Micronauts [tracing annotations](https://micronaut-projects.github.io/micronaut-tracing/latest/guide/#introduction).
+
+## Serverless Functions
+If you still have time, you can learn a bit more about how Micronaut can be used for serverless functions in the [official docs](https://docs.micronaut.io/latest/guide/#serverlessFunctions) 
+and especially with [AWS Lambda](https://micronaut-projects.github.io/micronaut-aws/latest/guide/#lambda). You can also check out this [guide](https://guides.micronaut.io/latest/micronaut-aws-lambda-eventbridge-event-gradle-java.html)
+to create a simple Lambda using Micronaut, you might be able to use one of the AWS sandbox environments, if you have someone that is familiar with those.
