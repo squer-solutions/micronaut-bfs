@@ -14,27 +14,31 @@ A simple Micronaut application is already available that exposes a single endpoi
 A functionally equivalent Spring Boot application is available as well.
 
 ## Micronaut Project Setup (If you want to start from scratch)
-To start with, we want to set up the basic structure for a Micronaut application. Micronaut offers two easy ways to do that:
+To start with, we want to create a new Micronaut application. Make sure to only include the features that you need for your scenario.
+Micronaut offers two easy ways to do that:
 
 ### Micronaut CLI
-There a multiple [options to install](https://micronaut-projects.github.io/micronaut-starter/latest/guide/#installation) the Micronaut CLI. I would recommend SDKMAN as this is useful for handling different versions:
+There a multiple [options to install](https://micronaut-projects.github.io/micronaut-starter/latest/guide/#installation) the Micronaut CLI.
+I would recommend [SDKMAN](https://sdkman.io/install) as this is also very useful for handling different versions (not only of Micronaut):
 If you don't have SDKMAN installed on your machine, go ahead and execute the following command:
 ```shell
 curl -s "https://get.sdkman.io" | bash
 ```
+Then we can simply install the latest version of Micronaut:
 ```shell
 sdk update
 sdk install micronaut
 ```
-
-After that you should have access to the Micronaut CLI and you can create a new application and open it in your preferred IDE. Make sure to include the necessary features, depending on the chosen scenario by providing the `--features data-jpa,postgres,redis-lettuce,kafka` flag in the following command:
+After that you should have access to the Micronaut CLI and you can create a new application and open it in your preferred IDE:
 ```shell
-mn create-app micronaut-bfs-essential-features
+mn create-app micronaut-bfs-essential-features --features data-jpa,postgres,redis-lettuce,kafka
 ```
 
 ### Micronaut Launch
-Micronaut offers another tool to create applications called [Micronaut Launch](https://micronaut.io/launch/). You can go to this page and create an application based on your needs. Make sure to select all necessary features, depending on the chosen scenario: data-jpa, postgres, redis-lettuce, kafka, etc. Then you can download the project and open it in your preferred IDE.
-Some IDEs have an integration with Micronaut Launch and you can create a new application right in the IDE. In IntelliJ, go to File->New->Project and select Micronaut in the list. 
+Micronaut offers another tool to create applications called [Micronaut Launch](https://micronaut.io/launch/). Make sure to select all necessary features: data-jpa, postgres, redis-lettuce, kafka.
+Then you can download the project and open it in your preferred IDE.
+Some IDEs have a direct integration with Micronaut Launch and you can create a new application right in the IDE.
+In IntelliJ, go to _File->New-> Project_ and select Micronaut in the list.
 
 ## Running the Application
 After you have created a new Micronaut application, you can simply run it from the IDE or using gradle:
@@ -90,6 +94,19 @@ For Micronaut there is a simple gradle command to build a docker image or even t
 ./gradlew clean dockerBuildNative
 ```
 
+It might be useful to change the name of the created image. This can be done by adjusting the gradle build file and updating the build step params:
+```kotlin
+tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerBuildImage>("dockerBuild") {
+    images.set(listOf("hello-world-micronaut:latest"))
+}
+
+tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerBuildImage>("dockerBuildNative") {
+    images.set(listOf("hello-world-micronaut-native:latest"))
+}
+```
+
+For Spring you might want to use the Jib plugin to build your docker image or [create the Dockerfile](https://spring.io/guides/topicals/spring-boot-docker) yourself.
+
 ### Compilation times
 Measuring compilation times should be quite simple, as build tools like Maven and Gradle report execution times of build steps by default.
 So you could simply run the following command and check the output to compare the compilation times:
@@ -98,7 +115,7 @@ So you could simply run the following command and check the output to compare th
 ```
 
 ### Startup times
-Measuring startup times should be quite simple, as Micronaut, Spring Boot and Quarkus report startup times in the application log by default.
+Measuring startup times should be quite simple as well, as Micronaut, Spring Boot and Quarkus report startup times in the application log by default.
 So you could simply run your application and check the output for the log statement:
 ```shell
 ./gradlew clean run
@@ -108,7 +125,7 @@ So you could simply run your application and check the output for the log statem
 
 ### Requests per second
 To measure a metric like requests per second tools like [hey](https://github.com/rakyll/hey) can be useful. Follow the installation instruction (or just use homebrew).
-The you can simply run your application and execute a hey command like this:
+Then you can simply run your application and execute a hey command like this:
 ```shell
 hey -n 100000 -c 50 http://localhost:8080/api/hello
 ```
@@ -127,4 +144,5 @@ You can also use `hey` to put some load on the application. Here we want to issu
 hey -z 30s -c 50 http://localhost:8080/api/hello
 ```
 
-Keep in mind that for Spring you might want to use the Jib plugin to build your docker image or [create the Dockerfile](https://spring.io/guides/topicals/spring-boot-docker) yourself.
+### More Metrics
+If you still have time you can identify some more insightful metrics and try to find a way to measure those on both applications.

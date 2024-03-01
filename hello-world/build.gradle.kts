@@ -51,5 +51,11 @@ micronaut {
     }
 }
 
+tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerBuildImage>("dockerBuild") {
+    images.set(listOf("hello-world-micronaut:latest"))
+}
 
+tasks.named<com.bmuschko.gradle.docker.tasks.image.DockerBuildImage>("dockerBuildNative") {
+    images.set(listOf("hello-world-micronaut-native:latest"))
+}
 
